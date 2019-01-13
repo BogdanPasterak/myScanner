@@ -1,6 +1,5 @@
 package myScannerTest;
 
-import java.awt.AWTException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,12 +13,20 @@ public class MS3Test {
 		InputStream stdin = System.in;
 		boolean allTest = true;
 
-		String testS;
+		String testS = "";
+		String[] answers = {
+				// getSrting( all params)
+				"yes\r\n", "no\r\n", "\r\n"
+		};
+		
+		// set answers for tests
+		for (String ans : answers) {
+			testS += ans;
+		}
+		
+		System.setIn(new ByteArrayInputStream(testS.getBytes()));
 
 		// Type yes and Enter getSrting( all params)
-		// set answer for test
-		System.setIn(new ByteArrayInputStream("yes\r\n".getBytes()));
-		// test
 		testS = MS3.getString("info", MS3.ALLOW_FILL, "yes", "no");
 		// result
 		if (allTest = oneOf(testS, allTest, "yes", "no"))
@@ -29,15 +36,13 @@ public class MS3Test {
 
 		
 		// Type no and Enter getSrting( all params)
-		System.setIn(new ByteArrayInputStream("no\r\n".getBytes()));
 		testS = MS3.getString("info", MS3.ALLOW_FILL, "yes", "no");
 		if (allTest = oneOf(testS, allTest, "yes", "no"))
 			System.out.println("Pass");
 		else
 			System.out.println("\nFail   output = " + testS);
 
-		// Type no and Enter getSrting( all params)
-		System.setIn(new ByteArrayInputStream("no\r\n".getBytes()));
+		// Type only Enter ( autocomplete ) getSrting( all params)
 		testS = MS3.getString("info", MS3.ALLOW_FILL, "yes", "no");
 		if (allTest = oneOf(testS, allTest, "yes", "no"))
 			System.out.println("Pass");
@@ -45,6 +50,7 @@ public class MS3Test {
 			System.out.println("\nFail   output = " + testS);
 
 
+		
 		// back original setting
 		System.setIn(stdin);
 		System.out.println("All test = " + allTest);

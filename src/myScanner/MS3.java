@@ -32,9 +32,6 @@ public class MS3 {
 
 	private static Random rand;
 	private static Scanner sc;
-	private static Robot robot;
-	private static boolean isRobot;
-	
 
 	private static String takenS;
 	private static int takenI;
@@ -58,20 +55,14 @@ public class MS3 {
 		if (sc == null) {
 			sc = new Scanner(System.in);
 			rand = new Random();
-			try {
-				robot = new Robot();
-				isRobot = true;
-			} catch (AWTException e) {
-				isRobot = false;
-			}
 		}
 	}
 
 	//--------------------------------------------------------------
 	// input line
-	public static String getString(String info, boolean fill, String... example) {
+	public static String getString(String info, boolean fill, String... examples) {
 		
-		String s;
+		String answer;
 		boolean ok = false;
 		
 		isScanner();
@@ -85,19 +76,27 @@ public class MS3 {
 
 		do {
 			System.out.print(info);
-			s = sc.nextLine();
+			answer = sc.nextLine();
 			
-			if (s.length() > 0 )
-				return s;
-			else {
-				ok = true;
-				System.out.println(s);
-				System.out.println("Pusty");
-			}
-
-		} while( ! ok );
+			if (answer.length() > 0 ) {
+				// user type something
+				if ( fill )
+					return answer;
+				// if don't fill must match patterns 
+				for (String example : examples) 
+					if (example.equals(answer))
+						return answer;
+				// if not match, try again
+			} else 
+				if ( fill )
+				// user type Enter, draws the answer
+					return STRINGS.getStringCustom(examples);
+				// if can't draw, try again
 		
-		return s;
+			System.out.println("Improper text, try again.");				
+
+		} while( true );
+		
 	}
 
 	
