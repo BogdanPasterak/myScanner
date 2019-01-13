@@ -59,12 +59,11 @@ public class MS3 {
 	}
 
 	//--------------------------------------------------------------
-	// input line
+	// input line full parameters
 	public static String getString(String info, boolean fill, String... examples) {
 		
 		String answer;
-		boolean ok = false;
-		
+
 		isScanner();
 
 		if (info.length() == 0)
@@ -83,14 +82,25 @@ public class MS3 {
 				if ( fill )
 					return answer;
 				// if don't fill must match patterns 
+				if (examples.length == 1)
+					// of category
+					for (String example : STRINGS.getCategoryArray(examples[0]))
+						if (example.equals(answer))
+							return answer;
 				for (String example : examples) 
+					// or examples
 					if (example.equals(answer))
 						return answer;
 				// if not match, try again
 			} else 
 				if ( fill )
 				// user type Enter, draws the answer
-					return STRINGS.getStringCustom(examples);
+					if (examples.length == 1)
+						// if one example probably category
+						return STRINGS.getStringFromCategory(examples[0]);
+					else
+						// draws one from examples
+						return STRINGS.getStringCustom(examples);
 				// if can't draw, try again
 		
 			System.out.println("Improper text, try again.");				
@@ -159,7 +169,7 @@ public class MS3 {
 
 		if (takenS.length() == 0) {
 			//System.out.println("drow");
-			takenS = STRINGS.getString( category );
+			takenS = STRINGS.getStringFromCategory( category );
 		}
 
 		return takenS;
@@ -524,7 +534,7 @@ public class MS3 {
 		private static final String[] department = {"Architecture", "Economics", "Geosciences", "IT", "Transportation", "Music"};
 
 		// Department
-		public static final String ITEM = "department";
+		public static final String ITEM = "item";
 		@SuppressWarnings("unused")
 		private static final String[] item = {"Milk", "Eggs", "Bread", "Butter", "Sugar", "Sweets"};
 
@@ -568,32 +578,26 @@ public class MS3 {
 						fieldNames[i] = "not String";
 					}
 				}
-				// test
-				/*
-				for (int i = 0; i < strings.length; i++) {
-					System.out.println("Name  " + fieldNames[i]);
-					for (String s : strings[i]) {
-						System.out.print(s + ", ");
-					}
-					System.out.println();
-				}
-				*/
 	    	}
 	    }
 
-
-		protected static String getString(String category) {
-			// Draws a String from the selected category
+	    private static String[] getCategoryArray (String category) {
+	    	
 			init();
 			//System.out.println(category);
-			
+			// if category exist draws one from category
 			for (int i = 0; i < fieldNames.length; i++) {
 				if (fieldNames[i].equals(category)) {
-					return getStringCustom(strings[i]);
+					return strings[i];
 				}
 			}
-			
-			return category;
+	    	// new array with one string
+	    	return new String[] {category};
+	    }
+
+		private static String getStringFromCategory(String category) {
+			// Draws a String from the selected category
+			return getStringCustom( getCategoryArray(category));
 		}
 
 		protected static String getStringCustom(String... examples) {
