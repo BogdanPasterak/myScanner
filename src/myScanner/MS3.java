@@ -1,9 +1,8 @@
 package myScanner;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
-import java.awt.AWTException;
-import java.awt.Robot;
 import java.lang.reflect.Field;
 
 /**
@@ -44,7 +43,6 @@ public class MS3 {
 	public static final boolean DONT_FILL = false;
 	
 	public static final boolean NOT_EMPTY = true;
-	// potrzebna zmiana
 	public static final boolean CAN_BE_EMPTY = false;
 	public static final boolean CAN_NOT_BE_ZERO = false;
 	public static final boolean NOT_AUTO_FILL = false;
@@ -66,12 +64,13 @@ public class MS3 {
 
 		isScanner();
 
-		if (info.length() == 0)
+		// validate info
+		if (info == null || info.length() == 0)
 			info = "Type line: ";
 		else if (info.endsWith(":"))
 			info += " ";
 		else if (!info.endsWith(": "))
-			info += " : ";
+			info += ": ";
 
 		do {
 			System.out.print(info);
@@ -79,7 +78,7 @@ public class MS3 {
 			
 			if (answer.length() > 0 ) {
 				// user type something
-				if ( fill )
+				if ( fill || examples == null )
 					return answer;
 				// if don't fill must match patterns 
 				if (examples.length == 1)
@@ -95,7 +94,9 @@ public class MS3 {
 			} else 
 				if ( fill )
 				// user type Enter, draws the answer
-					if (examples.length == 1)
+					if (examples == null || examples.length == 0)
+						return STRINGS.getStringFromAll();
+					else if (examples.length == 1)
 						// if one example probably category
 						return STRINGS.getStringFromCategory(examples[0]);
 					else
@@ -108,87 +109,55 @@ public class MS3 {
 		} while( true );
 		
 	}
+	
+	public static String getString(String info, boolean fill, String category) {
+		
+		return getString(info, fill, new String[] {category} );
+	}
+	
+	public static String getString(boolean fill, String... examples) {
+		
+		return getString(null, fill, examples);
+	}
+
+	public static String getString(boolean fill, String category) {
+		
+		return getString(null, fill, new String[] {category} );
+	}
+	
+	public static String getString(String info, boolean fill) {
+		
+		return getString(info, fill, new String[] {} );
+	}
+	
+	public static String getString(String info, String category) {
+		
+		return getString(info, ALLOW_FILL, new String[] {category} );
+	}
+	
+	public static String getString(String... infoAndExamples) {
+		
+		return getString(infoAndExamples[0], ALLOW_FILL, Arrays.copyOfRange(infoAndExamples, 1, infoAndExamples.length));
+	}
+	
+	public static String getString(String info) {
+		
+		return getString(info, ALLOW_FILL, new String[] {} );
+	}
+
+	public static String getString(boolean fill) {
+		
+		return getString(null, fill, new String[] {} );
+	}
+	
+	public static String getString() {
+		
+		return getString(null, ALLOW_FILL, new String[] {} );
+	}
+	
 
 	
 	// nowa wersja
-	public static String getString() {
-
-		return getString("", CAN_BE_EMPTY);
-	}
-
-	public static String getString(boolean notEmpty) {
-
-		return getString("", notEmpty);
-	}
-
-	public static String getString(boolean notEmpty, String... example) {
-		// ignore notEmpty, have to be able empty
-		
-		getString("");
-		
-		if (takenS.length() == 0) {
-			takenS = STRINGS.getStringCustom(example);
-		}
-
-		return takenS;
-	}
-
-	// input with info
-	public static String getString(String info) {
-
-		isScanner();
-
-		if (info.length() == 0)
-			info = "Type line : ";
-		else if (info.endsWith(":"))
-			info += " ";
-		else if (!info.endsWith(": "))
-			info += " : ";
-		
-		System.out.print(info);
-		takenS = sc.nextLine();
-
-		return takenS;
-	}
-
-	public static String getString(String info, boolean notEmpty) {
-
-		getString(info);
-
-		while (notEmpty && takenS.length() == 0) {
-			System.out.println("Try again, String can't be empty");
-			getString(info);
-		}
-
-		return takenS;
-	}
-
-	public static String getString(String info, String category ) {
-
-		getString(info);
-
-		if (takenS.length() == 0) {
-			//System.out.println("drow");
-			takenS = STRINGS.getStringFromCategory( category );
-		}
-
-		return takenS;
-	}
-
-	public static String getString(String... infoAndExample ) {
-
-		getString(infoAndExample[0]);
-
-		if (takenS.length() == 0) {
-			String[] example = new String[infoAndExample.length - 1];
-			for (int i = 0; i < example.length; i++) {
-				example[i] = infoAndExample[i + 1];
-			}
-			takenS = STRINGS.getStringCustom(example);
-		}
-
-		return takenS;
-	}
 
 	//--------------------------------------------------------------
 	// input int (if enter set 0)
@@ -533,10 +502,20 @@ public class MS3 {
 		@SuppressWarnings("unused")
 		private static final String[] department = {"Architecture", "Economics", "Geosciences", "IT", "Transportation", "Music"};
 
-		// Department
+		// Item
 		public static final String ITEM = "item";
 		@SuppressWarnings("unused")
 		private static final String[] item = {"Milk", "Eggs", "Bread", "Butter", "Sugar", "Sweets"};
+
+		// Yes / No
+		public static final String YES_NO = "yes_no";
+		@SuppressWarnings("unused")
+		private static final String[] yes_no = {"Yes", "No", "yes", "no", "YES", "NO", "y", "n", "Y", "N"};
+
+		// Yes / No / Cancel
+		public static final String YES_NO_CANCEL = "yes_no_cancel";
+		@SuppressWarnings("unused")
+		private static final String[] yes_no_cancel = {"Yes", "No", "Cancel", "yes", "no", "cancel", "YES", "NO", "CANCEL", "y", "n", "c", "Y", "N", "C"};
 
 		
 	    private static String[] fieldNames;
@@ -580,6 +559,13 @@ public class MS3 {
 				}
 	    	}
 	    }
+	    
+	    private static String getStringFromAll() {
+	    	init();
+	    	
+	    	return getStringCustom(strings[rand.nextInt(fieldNames.length)]);
+	    	////// 
+	    }
 
 	    private static String[] getCategoryArray (String category) {
 	    	
@@ -597,6 +583,10 @@ public class MS3 {
 
 		private static String getStringFromCategory(String category) {
 			// Draws a String from the selected category
+			if (category == "yes_no")
+				return yes_no[rand.nextInt(2)];
+			if (category == "yes_no_cancel")
+				return yes_no_cancel[rand.nextInt(3)];
 			return getStringCustom( getCategoryArray(category));
 		}
 
