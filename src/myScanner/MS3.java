@@ -62,6 +62,7 @@ public class MS3 {
 		
 		String answer;
 
+		// if first time use create new Scanner and Random
 		isScanner();
 
 		// validate info
@@ -72,35 +73,41 @@ public class MS3 {
 		else if (!info.endsWith(": "))
 			info += ": ";
 
+		// repeat until you get the correct answer
 		do {
 			System.out.print(info);
 			answer = sc.nextLine();
 			
+			// user type something
 			if (answer.length() > 0 ) {
-				// user type something
-				if ( fill || examples == null )
+				// correct Yes / No / Cancel answer
+				if ( examples.length == 1)
+					answer = STRINGS.validateYesNoCancel(answer, examples[0]);
+				// if can fill or no example to validate just answer
+				if ( fill || examples.length == 0 )
 					return answer;
-				// if don't fill must match patterns 
+				// if don't fill must match patterns of category
 				if (examples.length == 1)
-					// of category
 					for (String example : STRINGS.getCategoryArray(examples[0]))
 						if (example.equals(answer))
 							return answer;
+				// or examples
 				for (String example : examples) 
-					// or examples
 					if (example.equals(answer))
 						return answer;
 				// if not match, try again
+			// user type Enter, draws the answer
 			} else 
+				// if can draw
 				if ( fill )
-				// user type Enter, draws the answer
+					// no example , draw from all
 					if (examples == null || examples.length == 0)
 						return STRINGS.getStringFromAll();
+					// category or singel example
 					else if (examples.length == 1)
-						// if one example probably category
 						return STRINGS.getStringFromCategory(examples[0]);
+					// draws one from examples
 					else
-						// draws one from examples
 						return STRINGS.getStringCustom(examples);
 				// if can't draw, try again
 		
@@ -560,7 +567,25 @@ public class MS3 {
 	    	}
 	    }
 	    
-	    private static String getStringFromAll() {
+	    public static String validateYesNoCancel(String answer, String category) {
+			
+	    	if (category == "yes_no_cancel" || category == "yes_no") {
+	    		for (String s : yes_no_cancel)
+	    			if (answer.equals(s))
+	    				switch ( answer.toUpperCase().charAt(0) ) {
+						case 'Y':
+							return "Yes";
+						case 'N':
+							return "No";
+						case 'C':
+							if (category == "yes_no_cancel")
+								return "Cancel";
+						}
+	    	}
+			return answer;
+		}
+
+		private static String getStringFromAll() {
 	    	init();
 	    	
 	    	return getStringCustom(strings[rand.nextInt(fieldNames.length)]);
@@ -653,14 +678,14 @@ public class MS3 {
 				break;
 
 			default: // all_char
-				addAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}] {[+=-)(*&^%$£\"!€";
+				addAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$£\"!€";
 				break;
 			}
 			
 			return addAllowed(allowed, addAllowed);
 		}
 
-		protected static String addAllowed(String allowed, String addAllowed) {
+		private static String addAllowed(String allowed, String addAllowed) {
 			// adding
 			for (int i = 0; i < addAllowed.length(); i++) {
 				if (!allowed.contains(addAllowed.substring(i, i + 1))) {
