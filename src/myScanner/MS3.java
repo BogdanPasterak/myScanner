@@ -3,6 +3,7 @@ package myScanner;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 import java.lang.reflect.Field;
 
 /**
@@ -162,6 +163,78 @@ public class MS3 {
 		return getString(null, ALLOW_FILL, new String[] {} );
 	}
 	
+
+	//--------------------------------------------------------------
+	// input character full parameters
+	
+	public static char getChar(String info, boolean fill, String... restricts) {
+		boolean ok = false;
+		String allowed = "";
+
+		// if first time use create new Scanner and Random
+		isScanner();
+
+		// validate info
+		if (info == null || info.length() == 0)
+			info = "Type character: ";
+		else if (info.endsWith(":"))
+			info += " ";
+		else if (!info.endsWith(": "))
+			info += ": ";
+
+		// collect the restrictions together
+//		if (restricts.length == 0)
+//			allowed = CHARS.collectRestricts(new String[] {"" , CHARS.ALL_CHAR});
+//		else if (restricts.length == 1)
+//			allowed = CHARS.collectRestricts(new String[] {"" , restricts[0]});
+//		else 
+			allowed = CHARS.collectRestricts(restricts);
+
+
+		// check whether it is allowed
+//		for (int i = 0; i < restricts.length; i++) {
+//			if (CHARS.isRestrict(restricts[i])) {
+//				// System.out.println("RESTRICT ! " + restricts[i]);
+//				allowed = CHARS.addAllowedRestrict(allowed, restricts[i]);
+//			} else {
+//				// System.out.println("CUSTOM !! " + restricts[i]);
+//				allowed = CHARS.addAllowed(allowed, restricts[i]);
+//			}
+//			//System.out.println(allowed);
+//		}
+
+		do {
+			System.out.print(info);
+			takenS = sc.nextLine();
+
+			if (takenS.length() == 0) {
+				// if ENTER
+				if (fill) {
+					System.out.println("Try again, type some character");
+				} else {
+					// random of allowed
+					takenC = allowed.charAt(rand.nextInt(allowed.length()));
+					ok = true;
+				}
+			} else if ( allowed.contains(takenS.substring(0, 1)) ) {
+				// matched
+				takenC = takenS.charAt(0);
+				ok = true;
+			} else {
+				// not matched
+					System.out.println("Out of range, acceptable characters :");
+					// writing out permissible characters in rows after 16
+					for (int i = 0; i < allowed.length(); i++) {
+						System.out.print(allowed.substring(i, i+1) + 
+								((i == allowed.length() - 1) ? ".\n" : 
+									((i % 16 == 15) ? "  and\n" : ", ")));
+					}
+			} 
+
+		} while (!ok);
+
+		return takenC;
+	}
 
 	
 	// nowa wersja
@@ -424,64 +497,6 @@ public class MS3 {
 		return getChar(infoAndRestricts[0], CAN_BE_EMPTY, restricts);
 	}
 
-	public static char getChar(String info, boolean notEmpty, String... restricts) {
-		boolean ok = false;
-		String allowed = "";
-
-		isScanner();
-
-		if (info.length() == 0)
-			info = "Type \"char\" : ";
-		else if (info.endsWith(":"))
-			info += " ";
-		else if (!info.endsWith(": "))
-			info += " : ";
-
-		// check whether it is allowed
-		for (int i = 0; i < restricts.length; i++) {
-			if (CHARS.isRestrict(restricts[i])) {
-				// System.out.println("RESTRICT ! " + restricts[i]);
-				allowed = CHARS.addAllowedRestrict(allowed, restricts[i]);
-			} else {
-				// System.out.println("CUSTOM !! " + restricts[i]);
-				allowed = CHARS.addAllowed(allowed, restricts[i]);
-			}
-			//System.out.println(allowed);
-		}
-
-		do {
-			System.out.print(info);
-			takenS = sc.nextLine();
-
-			if (takenS.length() == 0) {
-				// if ENTER
-				if (notEmpty) {
-					System.out.println("Try again, type some character");
-				} else {
-					// random of allowed
-					takenC = allowed.charAt(rand.nextInt(allowed.length()));
-					ok = true;
-				}
-			} else if ( allowed.contains(takenS.substring(0, 1)) ) {
-				// matched
-				takenC = takenS.charAt(0);
-				ok = true;
-			} else {
-				// not matched
-					System.out.println("Out of range, acceptable characters :");
-					// writing out permissible characters in rows after 16
-					for (int i = 0; i < allowed.length(); i++) {
-						System.out.print(allowed.substring(i, i+1) + 
-								((i == allowed.length() - 1) ? ".\n" : 
-									((i % 16 == 15) ? "  and\n" : ", ")));
-					}
-			} 
-
-		} while (!ok);
-
-		return takenC;
-	}
-
 	
 	public static final class STRINGS {
 		// the class draws (with empty string) a string from the selected category
@@ -516,12 +531,10 @@ public class MS3 {
 
 		// Yes / No
 		public static final String YES_NO = "yes_no";
-		@SuppressWarnings("unused")
 		private static final String[] yes_no = {"Yes", "No", "yes", "no", "YES", "NO", "y", "n", "Y", "N"};
 
 		// Yes / No / Cancel
 		public static final String YES_NO_CANCEL = "yes_no_cancel";
-		@SuppressWarnings("unused")
 		private static final String[] yes_no_cancel = {"Yes", "No", "Cancel", "yes", "no", "cancel", "YES", "NO", "CANCEL", "y", "n", "c", "Y", "N", "C"};
 
 		
@@ -636,16 +649,34 @@ public class MS3 {
 		public static final String ALL_LETTERS_DIGITS_WHITE_SIGNS = "a-zA-Z0-9 _";
 		private static final String[] restrictes = { "all_char", "A-Z", "a-z", "a-zA-Z", "0-9", "a-zA-Z0-9", "space",
 				"underscore", "white-signs", "a-zA-Z0-9 _" };
-
-		protected static boolean isRestrict(String restrict) {
-			for (int i = 0; i < restrictes.length; i++) {
-				if (restrictes[i].equals(restrict))
-					return true;
+		
+		private static String getRestrict(String restrict) {
+			switch (restrict) {
+			case "all_char":
+				return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$£\"!€";
+			case "A-Z":
+				return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			case "a-z":
+				return "abcdefghijklmnopqrstuvwxyz";
+			case "a-zA-Z":
+				return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			case "0-9":
+				return "0123456789";
+			case "a-zA-Z0-9":
+				return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+			case "a-zA-Z0-9 _":
+				return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _";
+			case "space":
+				return " ";
+			case "underscore":
+				return "_";
+			case "white-signs":
+				return " _";
 			}
-			return false;
+			return "";
 		}
 
-		protected static String addAllowedRestrict(String allowed, String restrict) {
+		private static String addAllowedRestrict(String allowed, String restrict) {
 			String addAllowed;
 
 			switch (restrict) {
@@ -683,6 +714,34 @@ public class MS3 {
 			}
 			
 			return addAllowed(allowed, addAllowed);
+		}
+
+		private static String collectRestricts(String[] restricts) {
+			String allRestrict = "";
+			for (String restrict : restricts) {
+				if ( Arrays.stream(restrictes).anyMatch(restrict::equals) )
+					allRestrict = addDistinct(allRestrict, getRestrict(restrict));
+				else
+					allRestrict = addDistinct(allRestrict, restrict);
+			}
+			return allRestrict;
+		}
+
+		private static String addDistinct(String s1, String s2) {
+			
+			return IntStream.concat(s1.chars(), s2.chars())
+					.distinct()
+		            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+		            .toString();
+		}
+
+		private static boolean isRestrict(String restrict) {
+			return Arrays.stream(restrictes).anyMatch(restrict::equals);
+//			for (int i = 0; i < restrictes.length; i++) {
+//				if (restrictes[i].equals(restrict))
+//					return true;
+//			}
+//			return false;
 		}
 
 		private static String addAllowed(String allowed, String addAllowed) {
