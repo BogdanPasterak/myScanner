@@ -168,8 +168,8 @@ public class MS3 {
 	// input character full parameters
 	
 	public static char getChar(String info, boolean fill, String... restricts) {
-//		boolean ok = false;
 		String allowed = "";
+		String answer;
 
 		// if first time use create new Scanner and Random
 		isScanner();
@@ -183,42 +183,24 @@ public class MS3 {
 			info += ": ";
 
 		// collect the restrictions together
-//		if (restricts.length == 0)
-//			allowed = CHARS.collectRestricts(new String[] {"" , CHARS.ALL_CHAR});
-//		else if (restricts.length == 1)
-//			allowed = CHARS.collectRestricts(new String[] {"" , restricts[0]});
-//		else 
-			allowed = CHARS.collectRestricts(restricts);
-
-
-		// check whether it is allowed
-//		for (int i = 0; i < restricts.length; i++) {
-//			if (CHARS.isRestrict(restricts[i])) {
-//				// System.out.println("RESTRICT ! " + restricts[i]);
-//				allowed = CHARS.addAllowedRestrict(allowed, restricts[i]);
-//			} else {
-//				// System.out.println("CUSTOM !! " + restricts[i]);
-//				allowed = CHARS.addAllowed(allowed, restricts[i]);
-//			}
-//			//System.out.println(allowed);
-//		}
+		allowed = CHARS.collectRestricts(restricts);
 
 		// repeat until you get the correct answer
 		do {
 			System.out.print(info);
-			takenS = sc.nextLine();
+			answer = sc.nextLine();
 			
 			// user type Enter
-			if (takenS.length() == 0) {
+			if (answer.length() == 0) {
 				// return random char from allowed
 				if (fill)
 					return allowed.charAt(rand.nextInt(allowed.length()));
 				else
 					System.out.println("You must enter some character");
 			// user type something
-			} else if ( fill || allowed.contains(takenS.substring(0, 1)) ) {
+			} else if ( fill || allowed.contains(answer.substring(0, 1)) ) {
 				// if any one or matched
-				return takenS.charAt(0);
+				return answer.charAt(0);
 			} else {
 				// not matched
 				System.out.println("Out of range, acceptable characters :");
@@ -229,38 +211,56 @@ public class MS3 {
 								((i % 16 == 15) ? "  and\n" : ", ")));
 				}
 			}
-			
-
-//			if (takenS.length() == 0) {
-//				// if ENTER
-//				if (! fill) {
-//					System.out.println("Try again, type some character");
-//				} else {
-//					// random of allowed
-//					takenC = allowed.charAt(rand.nextInt(allowed.length()));
-//					ok = true;
-//				}
-//			} else if ( allowed.contains(takenS.substring(0, 1)) ) {
-//				// matched
-//				takenC = takenS.charAt(0);
-//				ok = true;
-//			} else {
-//				// not matched
-//					System.out.println("Out of range, acceptable characters :");
-//					// writing out permissible characters in rows after 16
-//					for (int i = 0; i < allowed.length(); i++) {
-//						System.out.print(allowed.substring(i, i+1) + 
-//								((i == allowed.length() - 1) ? ".\n" : 
-//									((i % 16 == 15) ? "  and\n" : ", ")));
-//					}
-//			} 
-
 		} while (true);
 
-//		return takenC;
+	}
+	
+	public static char getChar(String info, boolean fill, String restricts) {
+
+		return getChar(info , fill, new String[] { restricts , ""} );
 	}
 
+	public static char getChar(String info, String restricts) {
+
+		return getChar(info , ALLOW_FILL, new String[] { restricts , ""} );
+	}
+
+	public static char getChar(String info) {
+
+		return getChar(info, ALLOW_FILL, new String[] { CHARS.ALL_CHAR, ""} );
+	}
 	
+	public static char getChar(String... infoAndRestricts) {
+
+		return getChar(infoAndRestricts[0], ALLOW_FILL, Arrays.copyOfRange(infoAndRestricts, 1, infoAndRestricts.length));
+	}
+
+	public static char getChar() {
+
+		return getChar("", ALLOW_FILL, new String[] { CHARS.ALL_CHAR, ""});
+	}
+
+	public static char getChar(boolean fill) {
+
+		return getChar("", fill, new String[] { CHARS.ALL_CHAR, ""} );
+	}
+
+	public static char getChar(boolean fill, String... restricts ) {
+
+		return getChar("", fill, restricts);
+	}
+
+	public static char getChar(boolean fill, String restricts ) {
+
+		return getChar("", fill, new String[] { restricts , ""} );
+	}
+
+	public static char getChar(String info, boolean fill) {
+
+		return getChar("", fill, new String[] { CHARS.ALL_CHAR, ""} );
+	}
+
+
 	// nowa wersja
 
 	//--------------------------------------------------------------
@@ -481,44 +481,6 @@ public class MS3 {
 		} while (takenD < from || takenD > to);
 
 		return takenD;
-	}
-
-	//--------------------------------------------------------------
-	// input character
-	public static char getChar() {
-
-		return getChar("", CAN_BE_EMPTY);
-	}
-
-	public static char getChar(String info) {
-
-		return getChar(info, CAN_BE_EMPTY);
-	}
-
-	public static char getChar(boolean notEmpty) {
-
-		return getChar("", notEmpty);
-	}
-
-	public static char getChar(boolean notEmpty, String...restricts ) {
-
-		return getChar("", notEmpty, restricts);
-	}
-
-	public static char getChar(String info, boolean notEmpty) {
-
-		return getChar("", notEmpty, CHARS.ALL_CHAR);
-	}
-
-	public static char getChar(String... infoAndRestricts) {
-
-		String[] restricts = new String[infoAndRestricts.length - 1];
-
-		for (int i = 0; i < restricts.length; i++) {
-			restricts[i] = infoAndRestricts[i + 1];
-		}
-
-		return getChar(infoAndRestricts[0], CAN_BE_EMPTY, restricts);
 	}
 
 	
@@ -742,12 +704,24 @@ public class MS3 {
 
 		private static String collectRestricts(String[] restricts) {
 			String allRestrict = "";
-			for (String restrict : restricts) {
-				if ( Arrays.stream(restrictes).anyMatch(restrict::equals) )
-					allRestrict = addDistinct(allRestrict, getRestrict(restrict));
+
+			// if there are no restrictions
+			if (restricts.length == 0)
+				allRestrict = getRestrict("all_char");
+			// if only one
+			else if (restricts.length == 1)
+				if (Arrays.stream(restrictes).anyMatch(restricts[0]::equals))
+					allRestrict = getRestrict(restricts[0]);
 				else
-					allRestrict = addDistinct(allRestrict, restrict);
-			}
+					allRestrict = restricts[0];
+			// more than one
+			else
+				for (String restrict : restricts) {
+					if (Arrays.stream(restrictes).anyMatch(restrict::equals))
+						allRestrict = addDistinct(allRestrict, getRestrict(restrict));
+					else
+						allRestrict = addDistinct(allRestrict, restrict);
+				}
 			return allRestrict;
 		}
 
