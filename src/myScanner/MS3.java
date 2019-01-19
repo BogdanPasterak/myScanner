@@ -168,7 +168,7 @@ public class MS3 {
 	// input character full parameters
 	
 	public static char getChar(String info, boolean fill, String... restricts) {
-		boolean ok = false;
+//		boolean ok = false;
 		String allowed = "";
 
 		// if first time use create new Scanner and Random
@@ -203,37 +203,61 @@ public class MS3 {
 //			//System.out.println(allowed);
 //		}
 
+		// repeat until you get the correct answer
 		do {
 			System.out.print(info);
 			takenS = sc.nextLine();
-
+			
+			// user type Enter
 			if (takenS.length() == 0) {
-				// if ENTER
-				if (fill) {
-					System.out.println("Try again, type some character");
-				} else {
-					// random of allowed
-					takenC = allowed.charAt(rand.nextInt(allowed.length()));
-					ok = true;
-				}
-			} else if ( allowed.contains(takenS.substring(0, 1)) ) {
-				// matched
-				takenC = takenS.charAt(0);
-				ok = true;
+				// return random char from allowed
+				if (fill)
+					return allowed.charAt(rand.nextInt(allowed.length()));
+				else
+					System.out.println("You must enter some character");
+			// user type something
+			} else if ( fill || allowed.contains(takenS.substring(0, 1)) ) {
+				// if any one or matched
+				return takenS.charAt(0);
 			} else {
 				// not matched
-					System.out.println("Out of range, acceptable characters :");
-					// writing out permissible characters in rows after 16
-					for (int i = 0; i < allowed.length(); i++) {
-						System.out.print(allowed.substring(i, i+1) + 
-								((i == allowed.length() - 1) ? ".\n" : 
-									((i % 16 == 15) ? "  and\n" : ", ")));
-					}
-			} 
+				System.out.println("Out of range, acceptable characters :");
+				// writing out permissible characters in rows after 16
+				for (int i = 0; i < allowed.length(); i++) {
+					System.out.print(allowed.substring(i, i+1) + 
+							((i == allowed.length() - 1) ? ".\n" : 
+								((i % 16 == 15) ? "  and\n" : ", ")));
+				}
+			}
+			
 
-		} while (!ok);
+//			if (takenS.length() == 0) {
+//				// if ENTER
+//				if (! fill) {
+//					System.out.println("Try again, type some character");
+//				} else {
+//					// random of allowed
+//					takenC = allowed.charAt(rand.nextInt(allowed.length()));
+//					ok = true;
+//				}
+//			} else if ( allowed.contains(takenS.substring(0, 1)) ) {
+//				// matched
+//				takenC = takenS.charAt(0);
+//				ok = true;
+//			} else {
+//				// not matched
+//					System.out.println("Out of range, acceptable characters :");
+//					// writing out permissible characters in rows after 16
+//					for (int i = 0; i < allowed.length(); i++) {
+//						System.out.print(allowed.substring(i, i+1) + 
+//								((i == allowed.length() - 1) ? ".\n" : 
+//									((i % 16 == 15) ? "  and\n" : ", ")));
+//					}
+//			} 
 
-		return takenC;
+		} while (true);
+
+//		return takenC;
 	}
 
 	
