@@ -36,7 +36,6 @@ public class MS3 {
 	private static String takenS;
 	private static int takenI;
 	private static double takenD;
-	private static char takenC;
 
 	// boolean
 	
@@ -115,7 +114,6 @@ public class MS3 {
 			System.out.println("Improper text, try again.");				
 
 		} while( true );
-		
 	}
 	
 	public static String getString(String info, boolean fill, String category) {
@@ -207,8 +205,7 @@ public class MS3 {
 				// writing out permissible characters in rows after 16
 				for (int i = 0; i < allowed.length(); i++) {
 					System.out.print(allowed.substring(i, i+1) + 
-							((i == allowed.length() - 1) ? ".\n" : 
-								((i % 16 == 15) ? "  and\n" : ", ")));
+							((i == allowed.length() - 1) ? ".\n" : ((i % 16 == 15) ? "  and\n" : ", ")));
 				}
 			}
 		} while (true);
@@ -245,6 +242,11 @@ public class MS3 {
 		return getChar("", fill, new String[] { CHARS.ALL_CHAR, ""} );
 	}
 
+	public static char getChar(String info, boolean fill) {
+
+		return getChar("", fill, new String[] { CHARS.ALL_CHAR, ""} );
+	}
+
 	public static char getChar(boolean fill, String... restricts ) {
 
 		return getChar("", fill, restricts);
@@ -253,11 +255,6 @@ public class MS3 {
 	public static char getChar(boolean fill, String restricts ) {
 
 		return getChar("", fill, new String[] { restricts , ""} );
-	}
-
-	public static char getChar(String info, boolean fill) {
-
-		return getChar("", fill, new String[] { CHARS.ALL_CHAR, ""} );
 	}
 
 
@@ -515,11 +512,11 @@ public class MS3 {
 		@SuppressWarnings("unused")
 		private static final String[] item = {"Milk", "Eggs", "Bread", "Butter", "Sugar", "Sweets"};
 
-		// Yes / No
+		// Yes / No - always returns a validated value (Yes, No), allow some freedom when typing
 		public static final String YES_NO = "yes_no";
 		private static final String[] yes_no = {"Yes", "No", "yes", "no", "YES", "NO", "y", "n", "Y", "N"};
 
-		// Yes / No / Cancel
+		// Yes / No / Cancel - always returns a validated value (Yes, No, Cancel), allow some freedom when typing
 		public static final String YES_NO_CANCEL = "yes_no_cancel";
 		private static final String[] yes_no_cancel = {"Yes", "No", "Cancel", "yes", "no", "cancel", "YES", "NO", "CANCEL", "y", "n", "c", "Y", "N", "C"};
 
@@ -662,46 +659,6 @@ public class MS3 {
 			return "";
 		}
 
-		private static String addAllowedRestrict(String allowed, String restrict) {
-			String addAllowed;
-
-			switch (restrict) {
-			case "A-Z":
-				addAllowed = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-				break;
-			case "a-z":
-				addAllowed = "abcdefghijklmnopqrstuvwxyz";
-				break;
-			case "a-zA-Z":
-				addAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-				break;
-			case "0-9":
-				addAllowed = "0123456789";
-				break;
-			case "a-zA-Z0-9":
-				addAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-				break;
-			case "a-zA-Z0-9 _":
-				addAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _";
-				break;
-			case "space":
-				addAllowed = " ";
-				break;
-			case "underscore":
-				addAllowed = "_";
-				break;
-			case "white-signs":
-				addAllowed = " _";
-				break;
-
-			default: // all_char
-				addAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$£\"!€";
-				break;
-			}
-			
-			return addAllowed(allowed, addAllowed);
-		}
-
 		private static String collectRestricts(String[] restricts) {
 			String allRestrict = "";
 
@@ -733,27 +690,6 @@ public class MS3 {
 		            .toString();
 		}
 
-		private static boolean isRestrict(String restrict) {
-			return Arrays.stream(restrictes).anyMatch(restrict::equals);
-//			for (int i = 0; i < restrictes.length; i++) {
-//				if (restrictes[i].equals(restrict))
-//					return true;
-//			}
-//			return false;
-		}
-
-		private static String addAllowed(String allowed, String addAllowed) {
-			// adding
-			for (int i = 0; i < addAllowed.length(); i++) {
-				if (!allowed.contains(addAllowed.substring(i, i + 1))) {
-					allowed += addAllowed.substring(i, i + 1);
-				}
-			}
-
-			return allowed;
-		}
 	}
 
-
-	
 }
