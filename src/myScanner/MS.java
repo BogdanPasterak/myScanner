@@ -20,7 +20,7 @@ import java.lang.reflect.Field;
  * - You can add your own predefined values to the STRINGS class (info in the comment)
  *
  * Changes 
- * - Order of parametrs in getInt ( info, fill, from, to )
+ * - Order of parameters in getInt ( info, fill, from, to )
  * - Same in getDouble ( info, fill, from, to ) like getString and getChar
  * - STRINGS predefined Yes_No and Yes_No_Cancel with validation
  * - Primitive testers for all method
@@ -338,17 +338,17 @@ public class MS {
 	}
 	
 	public static int getInt(String info ) {
-		// cant random from zero to 100
+		// can random from zero to 100
 		return getInt(info, ALLOW_FILL, 0, 100);
 	}
 	
 	public static int getInt(String info, int from_0_to ) {
-		// cant random from zero 
+		// can random from zero 
 		return getInt(info, ALLOW_FILL, 0, from_0_to);
 	}
 	
 	public static int getInt(String info, int from, int to ) {
-		// cant random 
+		// can random 
 		return getInt(info, ALLOW_FILL, from, to);
 	}
 	
@@ -382,119 +382,120 @@ public class MS {
 		return getInt("", ALLOW_FILL, 0, from_0_to);
 	}
 	
-
-	
-	// nowa wersja
-	
-
 	// --------------------------------------------------------------
 	// input double
-	public static double getDouble() {
-
-		return getDouble("Type \"double\" : ", CAN_BE_ZERO);
-	}
-
-	public static double getDouble(boolean canBeZero) {
-
-		return getDouble("Type \"double\" : ", canBeZero);
-	}
-
-	public static double getDouble(String info) {
-
-		return getDouble(info, CAN_BE_ZERO);
-	}
-
-	public static double getDouble(String info, boolean canBeZero) {
-		boolean ok = true;
-
+	public static double getDouble(String info, boolean fill, double from, double to) {
+		String answer;
+		// if first time use create new Scanner and Random
 		isScanner();
 
-		if (info.length() == 0)
-			info = "Type \"double\" : ";
+		// validate range
+		if (from > to) {
+			// swap range and send info !
+			// throw new IllegalArgumentException("FROM it is bigger than TO");
+			System.err.println("\nWrong range, swap FROM=" + from + " and TO=" + to + "\n");
+			double temp = from;
+			from = to;
+			to = temp;
+		}
+		// validate info
+		if (info == null || info.length() == 0)
+			info = "Type double: ";
 		else if (info.endsWith(":"))
 			info += " ";
 		else if (!info.endsWith(": "))
-			info += " : ";
+			info += ": ";
 
-		// until the format is OK
+		// repeat until you get the correct answer
 		do {
-			// do not write the first time
-			if (!ok)
-				System.out.println("Try again, it was not \"double\" type");
-
 			System.out.print(info);
-			takenS = sc.nextLine();
-			try {
-				takenD = Double.parseDouble(takenS);
-				ok = true;
-			} catch (Exception e) {
-				if (canBeZero && takenS.equals("")) {
-					takenD = rand.nextDouble() * 100;
-					// System.out.println(takenD);
-					ok = true;
-				} else
-					ok = false;
-			}
-		} while (!ok);
-
-		return takenD;
-	}
-
-	public static double getDouble(double from_0_to) {
-
-		return getDouble(0.0, from_0_to, CAN_BE_ZERO);
-	}
-
-	public static double getDouble(double from_0_to, boolean canBeZero) {
-
-		return getDouble(0.0, from_0_to, canBeZero);
-	}
-
-	public static double getDouble(String info, double from_0_to) {
-
-		return getDouble(info, 0.0, from_0_to, CAN_BE_ZERO);
-	}
-
-	public static double getDouble(String info, double from_0_to, boolean canBeZero) {
-
-		return getDouble(info, 0.0, from_0_to, canBeZero);
-	}
-
-	public static double getDouble(double from, double to) {
-
-		return getDouble(from, to, CAN_BE_ZERO);
-	}
-
-	public static double getDouble(String info, double from, double to) {
-
-		return getDouble(info, from, to, CAN_BE_ZERO);
-	}
-
-	public static double getDouble(double from, double to, boolean canBeZero) {
-		String info = "Type \"double\" from " + from + " to " + to + " : ";
-
-		return getDouble(info, from, to, canBeZero);
-	}
-
-	public static double getDouble(String info, double from, double to, boolean canBeZero) {
-		boolean repeat = false;
-
-		do {
-			if (repeat)
-				System.out.println("Out of range, try again");
+			answer = sc.nextLine();
+			
+			// user type Enter
+			if (answer.length() == 0)
+				// return random int from range
+				if (fill)
+					return rand.nextDouble() * (to - from) + from;
+				else
+					System.out.println("You must enter some number");
+			// user type something
 			else
-				repeat = true;
-			getDouble(info, canBeZero);
-			// random number
-			if (takenS.equals("")) {
-				takenD = rand.nextDouble() * (to - from) + from;
-				// System.out.println(takenD);
-			}
-		} while (takenD < from || takenD > to);
-
-		return takenD;
+				try {
+					double i = Double.parseDouble(answer);
+					if ( ! fill && (i < from || i > to))
+						System.out.println("Out of range( " + from + " - " + to + " )");
+					else
+						return i;
+				} catch (NumberFormatException e) {
+					System.out.println("Wrong format for Double, tray again");
+				}
+		} while (true);
 	}
-
+	
+	public static double getDouble(String info, boolean fill, double from_0_to) {
+		// start from zero
+		return getDouble(info, fill, 0, from_0_to);
+	}
+	
+	public static double getDouble(String info, boolean fill) {
+		// from zero to 100
+		return getDouble(info, fill, 0, 100);
+	}
+	
+	public static double getDouble(String info, double from, double to) {
+		// can random 
+		return getDouble(info, ALLOW_FILL, from, to);
+	}
+	
+	public static double getDouble(String info, double from_0_to) {
+		// can random, start from zero
+		return getDouble(info, ALLOW_FILL, 0, from_0_to);
+	}
+	
+	public static double getDouble(String info) {
+		// can random, from zero to 100
+		return getDouble(info, ALLOW_FILL, 0, 100);
+	}
+	
+	public static double getDouble(boolean fill, double from, double to) {
+		// escape info
+		return getDouble("", fill, from, to);
+	}
+	
+	public static double getDouble(boolean fill, double from_0_to) {
+		// escape info, start from zero
+		return getDouble("", fill, 0, from_0_to);
+	}
+	
+	public static double getDouble(boolean fill) {
+		// escape from zero to 100
+		return getDouble("", fill, 0, 100);
+	}
+	
+	public static double getDouble(double from, double to) {
+		// escape info,  can random
+		return getDouble("", ALLOW_FILL, from, to);
+	}
+	
+	public static double getDouble(double from_0_to) {
+		// escape info,  can random, start from zero
+		return getDouble("", ALLOW_FILL, 0, from_0_to);
+	}
+	
+	public static double getDouble() {
+		// escape info,  can random, from zero to 100
+		return getDouble("", ALLOW_FILL, 0, 100);
+	}
+	
+	// --------------------------------------------------------------
+	// input fixed accuracy double ( > 0 after decimal, < 0 before decimal )
+	public static double getFDouble(String info, int accuracy, boolean fill, double from, double to) {
+		
+		return 0;
+	}
+	
+	// nowa wersja
+	
 	public static final class STRINGS {
 		// the class draws (with empty string) a string from the selected category
 		// *** YOU OWN VALUES ***
