@@ -88,9 +88,13 @@ public class MS3 {
 					return answer;
 				// if don't fill must match patterns of category
 				if (examples.length == 1)
-					for (String example : STRINGS.getCategoryArray(examples[0]))
-						if (example.equals(answer))
-							return answer;
+					// exeption for empty string
+					if (examples[0].equals(""))
+						return answer;
+					else
+						for (String example : STRINGS.getCategoryArray(examples[0]))
+							if (example.equals(answer))
+								return answer;
 				// or examples
 				for (String example : examples) 
 					if (example.equals(answer))
@@ -99,7 +103,7 @@ public class MS3 {
 			// user type Enter, draws the answer
 			} else 
 				// if can draw
-				if ( fill )
+				if ( fill ) {
 					// no example , draw from all
 					if (examples == null || examples.length == 0)
 						return STRINGS.getStringFromAll();
@@ -109,6 +113,9 @@ public class MS3 {
 					// draws one from examples
 					else
 						return STRINGS.getStringCustom(examples);
+				// accept empty String
+				} else if ( examples.length > 0 && examples[0] == "")
+					return "";
 				// if can't draw, try again
 		
 			System.out.println("Improper text, try again.");				
@@ -585,7 +592,6 @@ public class MS3 {
 	    	init();
 	    	
 	    	return getStringCustom(strings[rand.nextInt(fieldNames.length)]);
-	    	////// 
 	    }
 
 	    private static String[] getCategoryArray (String category) {
@@ -636,7 +642,7 @@ public class MS3 {
 		private static String getRestrict(String restrict) {
 			switch (restrict) {
 			case "all_char":
-				return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$Â£\"!â‚¬";
+				return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$£\"!€";
 			case "A-Z":
 				return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			case "a-z":

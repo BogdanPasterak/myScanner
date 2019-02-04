@@ -205,7 +205,7 @@ public class MyScanner2 {
 				break;
 
 			default: // all_char
-				addAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}] {[+=-)(*&^%$Â£\"!â‚¬";
+				addAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}] {[+=-)(*&^%$£\"!€";
 				break;
 			}
 			

@@ -13,7 +13,7 @@ import java.util.Scanner;
  * @since 21 Sep 2018
  */
 
-public class DeprecMyScanner {
+public class MyScanner {
 	private static Random rand;
 	private static Scanner sc;
 
@@ -34,7 +34,6 @@ public class DeprecMyScanner {
 		public static final String NAME = "name";
 		public static final String DEPARTMENT = "department";
 		
-		@SuppressWarnings("unused")
 		private static final String[] restrictes = { "first name", "surname", "name", "department"};
 		
 		

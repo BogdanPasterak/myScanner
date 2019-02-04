@@ -20,31 +20,24 @@ import java.lang.reflect.Field;
  * - You can add your own predefined values to the STRINGS class (info in the comment)
  *
  * Changes 
- * - Order of parameters in getInt ( info, fill, from, to )
+ * - Order of parametrs in getInt ( info, fill, from, to )
  * - Same in getDouble ( info, fill, from, to ) like getString and getChar
  * - STRINGS predefined Yes_No and Yes_No_Cancel with validation
  * - Primitive testers for all method
  * - Allowing the option of entering an empty string
- * 
- * Hereafter
- * getFDouble ( info, fill, rounded, from, to )
- * random ( rounded, from, to )
+ * - getFDouble ( info, rounded, fill, from, to )
+ * - getRandom[][Double][FDouble] ( from, to [, rounded] ) for int, double and Fdouble
  *
  * @author Bogdan Pasterak
  * @version 4.0
  * @since 22 Jan 2019
  */
 
-// do double dodac zaokraglenie !!!!
 
 public class MS {
 
 	private static Random rand;
 	private static Scanner sc;
-
-	private static String takenS;
-	private static int takenI;
-	private static double takenD;
 
 	// boolean
 
@@ -490,10 +483,157 @@ public class MS {
 	// --------------------------------------------------------------
 	// input fixed accuracy double ( > 0 after decimal, < 0 before decimal )
 	public static double getFDouble(String info, int accuracy, boolean fill, double from, double to) {
-		
-		return 0;
+		String answer;
+		double power;
+		// if first time use create new Scanner and Random
+		isScanner();
+
+		// validate accuracy
+		if (accuracy > 9 || accuracy < -9) {
+			// throw new IllegalArgumentException("Accuracy is over the range");
+			System.err.println("\nWrong accuracy, allowed range from 9 to -9, was " + accuracy + "\n");
+			accuracy = 0;
+		}
+		power = Math.pow(10, accuracy);
+		// validate range
+		if (from > to) {
+			// swap range and send info !
+			// throw new IllegalArgumentException("FROM it is bigger than TO");
+			System.err.println("\nWrong range, swap FROM=" + from + " and TO=" + to + "\n");
+			double temp = from;
+			from = to;
+			to = temp;
+		}
+		// precision bigger than range
+		if (to < 1 / power) {
+			// throw new IllegalArgumentException("To low range from or to");
+			System.err.println("\nWrong accuracy to range = " + accuracy + " and to = " + to + "\n");
+			return getDouble(info, fill, from, to);
+		}
+		// validate info
+		if (info == null || info.length() == 0)
+			info = "Type double: ";
+		else if (info.endsWith(":"))
+			info += " ";
+		else if (!info.endsWith(": "))
+			info += ": ";
+
+		// repeat until you get the correct answer
+		do {
+			System.out.print(info);
+			answer = sc.nextLine();
+			
+			// user type Enter
+			if (answer.length() == 0)
+				// return random int from range
+				if (fill)
+					return getRnd((int)(from * power), (int)(to * power)) / power;
+				else
+					System.out.println("You must enter some number");
+			// user type something
+			else
+				try {
+					double i = Double.parseDouble(answer);
+					if ( ! fill && (i < from || i > to))
+						System.out.println("Out of range( " + from + " - " + to + " )");
+					else
+						// set precision
+						return Math.round(i * power) / power;
+				} catch (NumberFormatException e) {
+					System.out.println("Wrong format for Double, tray again");
+				}
+		} while (true);
 	}
 	
+	public static double getFDouble(String info, int accuracy, boolean fill, double from_0_to) {
+		// start from zero
+		return getFDouble(info, accuracy, fill, 0, from_0_to);
+	}
+	
+	public static double getFDouble(String info, int accuracy, boolean fill) {
+		// from zero to 100
+		return getFDouble(info, accuracy, fill, 0, 100);
+	}
+	
+	public static double getFDouble(String info, int accuracy, double from, double to) {
+		// can random 
+		return getFDouble(info, accuracy, ALLOW_FILL, from, to);
+	}
+	
+	public static double getFDouble(String info, int accuracy, double from_0_to) {
+		// can random, start from zero
+		return getFDouble(info, accuracy, ALLOW_FILL, 0, from_0_to);
+	}
+	
+	public static double getFDouble(String info, int accuracy) {
+		// can random, from zero to 100
+		return getFDouble(info, accuracy, ALLOW_FILL, 0, 100);
+	}
+	
+	public static double getFDouble(int accuracy, boolean fill, double from, double to) {
+		// escape info
+		return getFDouble("", accuracy, fill, from, to);
+	}
+	
+	public static double getFDouble(int accuracy, boolean fill, double from_0_to) {
+		// escape info, start from zero
+		return getFDouble("", accuracy, fill, 0, from_0_to);
+	}
+	
+	public static double getFDouble(int accuracy, boolean fill) {
+		// escape from zero to 100
+		return getFDouble("", accuracy, fill, 0, 100);
+	}
+	
+	public static double getFDouble(int accuracy, double from, double to) {
+		// escape info,  can random
+		return getFDouble("", accuracy, ALLOW_FILL, from, to);
+	}
+	
+	public static double getFDouble(int accuracy, double from_0_to) {
+		// escape info,  can random, start from zero
+		return getFDouble("", accuracy, ALLOW_FILL, 0, from_0_to);
+	}
+	
+	public static double getFDouble(int accuracy) {
+		// escape info,  can random, from zero to 100
+		return getFDouble("", accuracy, ALLOW_FILL, 0, 100);
+	}
+	
+	
+	// get random int 
+	private static int getRnd(int from, int to) {
+		return rand.nextInt(to - from + 1) + from;
+	}
+	
+	public static int getRandom(int from, int to) {
+		isScanner();
+		return getRnd(from, to);
+	}
+
+	private static double getRndD(int from, int to) {
+		return rand.nextDouble() * (to - from) + from;
+	}
+	
+	public static double getRandomDouble(int from, int to) {
+		isScanner();
+		return getRndD(from, to);
+	}
+
+	private static double getRndFD(int from, int to, int accuracy) {
+		double power = Math.pow(10, accuracy);
+		return getRnd((int)(from * power), (int)(to * power)) / power;
+	}
+	
+	public static double getRandomFDouble(int from, int to, int accuracy ) {
+		isScanner();
+		if (accuracy > 9 || accuracy < -9 || from > to || to < Math.pow(10, -accuracy)) {
+			System.err.println("\nInvalid data for random value\n");
+			return 0;
+		}
+		return getRndFD(from, to, accuracy);
+	}
+
 	// nowa wersja
 	
 	public static final class STRINGS {
@@ -654,7 +794,7 @@ public class MS {
 		private static String getRestrict(String restrict) {
 			switch (restrict) {
 			case "all_char":
-				return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$Â£\"!â‚¬";
+				return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$£\"!€";
 			case "A-Z":
 				return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			case "a-z":

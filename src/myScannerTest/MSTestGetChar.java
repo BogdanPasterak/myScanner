@@ -161,7 +161,7 @@ public class MSTestGetChar {
 		// Type Enter one of all
 		test = MS.getChar("Type a or b");
 		// result
-		if (allTest = oneOf(test, allTest, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$Â£\"!â‚¬"))
+		if (allTest = oneOf(test, allTest, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$£\"!€"))
 			System.out.println(test + "\nPass");
 		else
 			System.out.println("\nFail   output = " + test);
@@ -208,7 +208,7 @@ public class MSTestGetChar {
 		// Type Enter one of all
 		test = MS.getChar();
 		// result
-		if (allTest = oneOf(test, allTest, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$Â£\"!â‚¬"))
+		if (allTest = oneOf(test, allTest, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$£\"!€"))
 			System.out.println(test + "\nPass");
 		else
 			System.out.println("\nFail   output = " + test);
@@ -228,7 +228,7 @@ public class MSTestGetChar {
 		// Type Enter one of all
 		test = MS.getChar(MS.ALLOW_FILL);
 		// result
-		if (allTest = oneOf(test, allTest, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$Â£\"!â‚¬"))
+		if (allTest = oneOf(test, allTest, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$£\"!€"))
 			System.out.println(test + "\nPass");
 		else
 			System.out.println("\nFail   output = " + test);
@@ -255,7 +255,7 @@ public class MSTestGetChar {
 		// Type Enter one of all
 		test = MS.getChar("info", MS.ALLOW_FILL);
 		// result
-		if (allTest = oneOf(test, allTest, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$Â£\"!â‚¬"))
+		if (allTest = oneOf(test, allTest, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$£\"!€"))
 			System.out.println(test + "\nPass");
 		else
 			System.out.println("\nFail   output = " + test);

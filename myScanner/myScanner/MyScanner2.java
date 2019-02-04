@@ -2,6 +2,8 @@ package myScanner;
 
 import java.util.Random;
 import java.util.Scanner;
+import java.lang.reflect.Field;
+
 
 /**
  * Wrapper Class to Scanner. - Opens the channel once. - It displays information
@@ -13,7 +15,7 @@ import java.util.Scanner;
  * @since 21 Sep 2018
  */
 
-public class DeprecMyScanner {
+public class MyScanner2 {
 	private static Random rand;
 	private static Scanner sc;
 
@@ -29,14 +31,94 @@ public class DeprecMyScanner {
 	public static final boolean CAN_BE_ZERO = true;
 	
 	public static final class STRINGS {
-		public static final String FIRST_NAME = "first name";
+		// the class draws (with empty string) a string from the selected category
+		// to add categories, create a public string with the category name
+		// and private string array with this name
+		public static final String FIRST_NAME = "first_name";
+	    @SuppressWarnings("unused")
+		private static final String[] first_name = {"Bogdan", "Jon", "Lise", "Max", "Niels", "Patty", "Richard"};
 		public static final String SURNAME = "surname";
-		public static final String NAME = "name";
-		public static final String DEPARTMENT = "department";
-		
 		@SuppressWarnings("unused")
-		private static final String[] restrictes = { "first name", "surname", "name", "department"};
+		private static final String[] surname = {"Pasterak", "Doe", "Curie", "Planck", "Bohr", "Wotson"};
+		public static final String NAME = "name";
+		@SuppressWarnings("unused")
+		private static final String[] name = {"Bogdan Pasterak", "Jon Doe", "Jacqueline K. Barton", "Gertrude B. Elion", "Enrico Fermi", "Frieda Robscheit-Robbins"};
+		public static final String DEPARTMENT = "department";
+		@SuppressWarnings("unused")
+		private static final String[] department = {"Architecture", "Economics", "Geosciences", "IT", "Transportation", "Music"};
 		
+	    private static String[] fieldNames;
+		private static String[][] strings;
+		
+	    private static void init() {
+	        // rewrites all arrays to 2dim array strings and names to fieldNames
+	    	if (strings == null) {
+				Field[] fields = STRINGS.class.getFields();
+				Field[] allFields = STRINGS.class.getDeclaredFields();
+
+				strings = new String[fields.length][];
+				fieldNames = new String[fields.length];
+
+				for (int i = 0; i < fields.length; i++) {
+					String fieldName;
+					if (fields[i].getType() == String.class) {
+						try {
+							boolean is = false;
+							fieldName = (String) fields[i].get(String.class);
+							fieldNames[i] = fieldName;
+
+							for (Field field : allFields) {
+								if (field.getName().equals(fieldName)) {
+									strings[i] = (String[]) field.get(String[].class);
+									is = true;
+									break;
+								}
+							}
+							if (!is) {
+								strings[i] = new String[] { "no data" };
+							}
+						} catch (IllegalAccessException e) {
+							strings[i] = new String[] { "no data" };
+							fieldNames[i] = "no name";
+						}
+					} else {
+						strings[i] = new String[] { "no data" };
+						fieldNames[i] = "not String";
+					}
+				}
+				// test
+				/*
+				for (int i = 0; i < strings.length; i++) {
+					System.out.println("Name  " + fieldNames[i]);
+					for (String s : strings[i]) {
+						System.out.print(s + ", ");
+					}
+					System.out.println();
+				}
+				*/
+	    	}
+	    }
+
+
+
+		protected static String getString(String category) {
+			// Draws a String from the selected category
+			init();
+			//System.out.println(category);
+			
+			for (int i = 0; i < fieldNames.length; i++) {
+				if (fieldNames[i].equals(category)) {
+					return getStringCustom(strings[i]);
+				}
+			}
+			
+			return category;
+		}
+
+		protected static String getStringCustom(String... examples) {
+			// Draws from custom examples
+			return examples[rand.nextInt(examples.length)];
+		}
 		
 	}
 
@@ -99,14 +181,11 @@ public class DeprecMyScanner {
 				addAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}] {[+=-)(*&^%$£\"!€";
 				break;
 			}
-
-			// TODO Auto-generated method stub
+			
 			return addAllowed(allowed, addAllowed);
 		}
 
 		protected static String addAllowed(String allowed, String addAllowed) {
-			// TODO Auto-generated method stub
-
 			// adding
 			for (int i = 0; i < addAllowed.length(); i++) {
 				if (!allowed.contains(addAllowed.substring(i, i + 1))) {
@@ -130,12 +209,24 @@ public class DeprecMyScanner {
 	// input line
 	public static String getString() {
 
-		return getString("Type line : ", CAN_BE_EMPTY);
+		return getString("", CAN_BE_EMPTY);
 	}
 
 	public static String getString(boolean notEmpty) {
 
-		return getString("Type line : ", notEmpty);
+		return getString("", notEmpty);
+	}
+
+	public static String getString(boolean notEmpty, String... example) {
+		// ignore notEmpty, have to be able empty
+		
+		getString("");
+		
+		if (takenS.length() == 0) {
+			takenS = STRINGS.getStringCustom(example);
+		}
+
+		return takenS;
 	}
 
 	// input with info
@@ -149,6 +240,7 @@ public class DeprecMyScanner {
 			info += " ";
 		else if (!info.endsWith(": "))
 			info += " : ";
+		
 		System.out.print(info);
 		takenS = sc.nextLine();
 
@@ -167,16 +259,43 @@ public class DeprecMyScanner {
 		return takenS;
 	}
 
+	public static String getString(String info, String category ) {
+
+		getString(info);
+
+		if (takenS.length() == 0) {
+			//System.out.println("drow");
+			takenS = STRINGS.getString( category );
+		}
+
+		return takenS;
+	}
+
+	public static String getString(String... infoAndExample ) {
+
+		getString(infoAndExample[0]);
+
+		if (takenS.length() == 0) {
+			String[] example = new String[infoAndExample.length - 1];
+			for (int i = 0; i < example.length; i++) {
+				example[i] = infoAndExample[i + 1];
+			}
+			takenS = STRINGS.getStringCustom(example);
+		}
+
+		return takenS;
+	}
+
 	//--------------------------------------------------------------
 	// input int (if enter set 0)
 	public static int getInt() {
 
-		return getInt("Type \"int\" : ", CAN_BE_ZERO);
+		return getInt("", CAN_BE_ZERO);
 	}
 
 	public static int getInt(boolean canBeZero) {
 
-		return getInt("Type \"int\" : ", canBeZero);
+		return getInt("", canBeZero);
 	}
 
 	public static int getInt(String info) {
@@ -209,7 +328,8 @@ public class DeprecMyScanner {
 				ok = true;
 			} catch (Exception e) {
 				if (canBeZero && takenS.equals("")) {
-					takenI = 0;
+					takenI = rand.nextInt(100);
+					System.out.println(takenI);
 					ok = true;
 				} else
 					ok = false;
@@ -221,9 +341,8 @@ public class DeprecMyScanner {
 
 	// range to int
 	public static int getInt(int from, int to) {
-		String info = "Type \"int\" from " + from + " to " + to + " : ";
 
-		return getInt(info, from, to, CAN_BE_ZERO);
+		return getInt(from, to, CAN_BE_ZERO);
 	}
 
 	public static int getInt(int from, int to, boolean canBeZero) {
@@ -234,6 +353,9 @@ public class DeprecMyScanner {
 
 	public static int getInt(String info, int from, int to, boolean canBeZero) {
 		boolean repeat = false;
+		
+		if (from > to)
+			throw new IllegalArgumentException("FROM it is bigger than TO");
 
 		do {
 			if (repeat)
@@ -241,6 +363,11 @@ public class DeprecMyScanner {
 			else
 				repeat = true;
 			getInt(info, canBeZero);
+			// if tekenS is empty random number from range!
+			if (takenS.equals("")) {
+				takenI = rand.nextInt(to - from + 1) + from;
+				System.out.println(takenI);
+			}
 		} while (takenI < from || takenI > to);
 
 		return takenI;
@@ -313,7 +440,8 @@ public class DeprecMyScanner {
 				ok = true;
 			} catch (Exception e) {
 				if (canBeZero && takenS.equals("")) {
-					takenD = 0;
+					takenD = rand.nextDouble() * 100;
+					System.out.println(takenD);
 					ok = true;
 				} else
 					ok = false;
@@ -325,12 +453,12 @@ public class DeprecMyScanner {
 
 	public static double getDouble(double to) {
 
-		return getDouble("Type \"double\" : ", 0.0, to, CAN_BE_ZERO);
+		return getDouble( 0.0, to, CAN_BE_ZERO);
 	}
 
 	public static double getDouble(double to, boolean canBeZero) {
 
-		return getDouble("Type \"double\" : ", 0.0, to, canBeZero);
+		return getDouble( 0.0, to, canBeZero);
 	}
 
 	public static double getDouble(String info, double to) {
@@ -345,7 +473,7 @@ public class DeprecMyScanner {
 
 	public static double getDouble(double from, double to) {
 
-		return getDouble("Type \"double\" : ", from, to, CAN_BE_ZERO);
+		return getDouble( from, to, CAN_BE_ZERO);
 	}
 
 	public static double getDouble(String info, double from, double to) {
@@ -354,8 +482,9 @@ public class DeprecMyScanner {
 	}
 
 	public static double getDouble(double from, double to, boolean canBeZero) {
+		String info = "Type \"double\" from " + from + " to " + to + " : ";
 
-		return getDouble("Type \"double\" : ", from, to, canBeZero);
+		return getDouble(info, from, to, canBeZero);
 	}
 
 	public static double getDouble(String info, double from, double to, boolean canBeZero) {
@@ -367,6 +496,11 @@ public class DeprecMyScanner {
 			else
 				repeat = true;
 			getDouble(info, canBeZero);
+			// random number
+			if (takenS.equals("")) {
+				takenD = rand.nextDouble() * (to - from) + from;
+				System.out.println(takenD);
+			}
 		} while (takenD < from || takenD > to);
 
 		return takenD;
