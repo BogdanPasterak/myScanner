@@ -1,4 +1,3 @@
-package myScannerTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

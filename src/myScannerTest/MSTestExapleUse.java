@@ -1,4 +1,3 @@
-package myScannerTest;
 
 import myScanner.MS;
 

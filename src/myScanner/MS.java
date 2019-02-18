@@ -44,11 +44,11 @@ public class MS {
 	public static final boolean ALLOW_FILL = true;
 	public static final boolean DONT_FILL = false;
 
-	public static final boolean NOT_EMPTY = true;
-	public static final boolean CAN_BE_EMPTY = false;
-	public static final boolean CAN_NOT_BE_ZERO = false;
-	public static final boolean NOT_AUTO_FILL = false;
-	public static final boolean CAN_BE_ZERO = true;
+//	public static final boolean NOT_EMPTY = true;
+//	public static final boolean CAN_BE_EMPTY = false;
+//	public static final boolean CAN_NOT_BE_ZERO = false;
+//	public static final boolean NOT_AUTO_FILL = false;
+//	public static final boolean CAN_BE_ZERO = true;
 
 	// if scanner object does not exist yet
 	private static void isScanner() {
@@ -56,6 +56,11 @@ public class MS {
 			sc = new Scanner(System.in);
 			rand = new Random();
 		}
+	}
+
+	public static void resetScanner() {
+		sc = new Scanner(System.in);
+		rand = new Random();
 	}
 
 	// --------------------------------------------------------------
@@ -794,7 +799,7 @@ public class MS {
 		private static String getRestrict(String restrict) {
 			switch (restrict) {
 			case "all_char":
-				return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$£\"!€";
+				return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _\\/|?<>,.~#@':;}]`{[+=-)(*&^%$Â£\"!â‚¬";
 			case "A-Z":
 				return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			case "a-z":
