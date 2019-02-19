@@ -87,7 +87,7 @@ public class TestJUnit4String {
 	    typeData = "Bodzio\nBogdan\n";
 		expectAnswer = "Bogdan";
 		setPrompt = "Enter first name";
-		expectPrompt = "Enter first name: " + "Improper text, try again.\n" + "Enter first name: ";
+		expectPrompt = "Enter first name: " + "Improper text, try again." + System.getProperty("line.separator") + "Enter first name: ";
 		// windows end line
 //		expectPrompt = "Enter first name: " + "Improper text, try again.\r\n" + "Enter first name: ";
 		
@@ -128,8 +128,8 @@ public class TestJUnit4String {
 	    typeData = "\nB\nBogdan\n";
 		expectAnswer = "Bogdan";
 		setPrompt = null;
-		expectPrompt = "Type line: " + "Improper text, try again.\n" + "Type line: " +
-				"Improper text, try again.\n" + "Type line: ";
+		expectPrompt = "Type line: " + "Improper text, try again." + System.getProperty("line.separator") + "Type line: " +
+				"Improper text, try again." + System.getProperty("line.separator") + "Type line: ";
 		// windows end line
 //		expectPrompt = "Type line: " + "Improper text, try again.\r\n" + "Type line: " +
 //				"Improper text, try again.\r\n" + "Type line: ";

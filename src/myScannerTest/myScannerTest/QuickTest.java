@@ -10,6 +10,8 @@ public class QuickTest {
 		for (String string : MS.STRINGS.getStringsFromAllCategories()) {
 			System.out.println(string);
 		}
+		System.out.println(System.getProperty("os.name"));
+		System.out.println(System.getProperty("line.separator").length());
 	}
 
 }
