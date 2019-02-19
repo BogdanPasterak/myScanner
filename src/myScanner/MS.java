@@ -1,5 +1,6 @@
 package myScanner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
@@ -44,23 +45,21 @@ public class MS {
 	public static final boolean ALLOW_FILL = true;
 	public static final boolean DONT_FILL = false;
 
-//	public static final boolean NOT_EMPTY = true;
-//	public static final boolean CAN_BE_EMPTY = false;
-//	public static final boolean CAN_NOT_BE_ZERO = false;
-//	public static final boolean NOT_AUTO_FILL = false;
-//	public static final boolean CAN_BE_ZERO = true;
 
 	// if scanner object does not exist yet
 	private static void isScanner() {
 		if (sc == null) {
 			sc = new Scanner(System.in);
 			rand = new Random();
+			STRINGS.init();
 		}
 	}
 
+	// Used for test
 	public static void resetScanner() {
 		sc = new Scanner(System.in);
 		rand = new Random();
+		STRINGS.init();
 	}
 
 	// --------------------------------------------------------------
@@ -746,15 +745,12 @@ public class MS {
 		}
 
 		private static String getStringFromAll() {
-			init();
-
-			return getStringCustom(strings[rand.nextInt(fieldNames.length)]);
+			
+			return getStringFromCategory(fieldNames[rand.nextInt(fieldNames.length)]);
 		}
 
 		private static String[] getCategoryArray(String category) {
 
-			init();
-			// System.out.println(category);
 			// if category exist draws one from category
 			for (int i = 0; i < fieldNames.length; i++) {
 				if (fieldNames[i].equals(category)) {
@@ -764,17 +760,51 @@ public class MS {
 			// new array with one string
 			return new String[] { category };
 		}
-
+		
+		private static int getIndexOfCategory(String category) {
+			
+			return Arrays.asList(fieldNames).indexOf(category);
+		}
+		
+		// Used for test
+		public static String[] getStringsFromCategory(String category) {
+			
+			isScanner();
+			
+			if (category == "yes_no")
+				return Arrays.copyOfRange(yes_no, 0, 2);
+			if (category == "yes_no_cancel")
+				return Arrays.copyOfRange(yes_no_cancel, 0, 3);
+			int index = getIndexOfCategory(category);
+			return Arrays.copyOf(strings[index], strings[index].length );
+		}
+		
+		// Used for test
+		public static String[] getStringsFromAllCategories() {
+			ArrayList<String> list = new ArrayList<>();
+			
+			isScanner();
+			for (String category : fieldNames)
+				if ( ! category.equals("yes_no")) // yes_no_cancel repete
+					for (String s : getStringsFromCategory(category))
+						list.add(s);
+			
+			String[] data = new String[list.size()];
+			return  list.toArray(data);	
+		}
+		
 		private static String getStringFromCategory(String category) {
 			// Draws a String from the selected category
 			if (category == "yes_no")
 				return yes_no[rand.nextInt(2)];
 			if (category == "yes_no_cancel")
 				return yes_no_cancel[rand.nextInt(3)];
-			return getStringCustom(getCategoryArray(category));
+			int index = getIndexOfCategory(category);
+			return strings[index][rand.nextInt(strings[index].length)];
+			// return getStringCustom(getCategoryArray(category));
 		}
 
-		protected static String getStringCustom(String... examples) {
+		private static String getStringCustom(String... examples) {
 			// Draws from custom examples
 			return examples[rand.nextInt(examples.length)];
 		}
